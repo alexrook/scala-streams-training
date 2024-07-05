@@ -1,0 +1,28 @@
+# sbt/bsp
+.bsp
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# VSCode
+**metals*
+**bloop*
+**vscode*
+
+# Maven
+target/
+
+*.class
+
+*.log
+
+# root .env file
+.env
+
