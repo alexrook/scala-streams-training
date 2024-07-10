@@ -18,10 +18,12 @@ object ActorRefDSL extends App {
     onCompleteMessage = Command.StreamComplete
   )
 
+  
+
   val source = Source.fromIterator(() => List.fill(12)("A").iterator)
 
-  val ret = source.runWith(sink)
-
+  val ret = source.viaMat(???)(???)
+  .runWith(sink)
 
   system.terminate()
 
