@@ -5,11 +5,16 @@ import akka.actor._
 import akka.stream._
 import akka.stream.scaladsl._
 import akka.NotUsed
+import scala.concurrent.ExecutionContextExecutor
+import app.ActorRefDSL.{streamSize => streamSize}
 
 object ActorRefDSL extends App {
   import SumActor._
 
   implicit val system: ActorSystem = ActorSystem("ActorRefDSL")
+  implicit val ec: ExecutionContextExecutor = system.dispatcher
+
+  val streamSize = 12
 
   val sumActor = system.actorOf(SumActor.props, "SumActor")
 
@@ -18,22 +23,30 @@ object ActorRefDSL extends App {
     onCompleteMessage = Command.StreamComplete
   )
 
-  
+  val source = Source.fromIterator(() => List.fill(streamSize)("A").iterator)
 
-  val source = Source.fromIterator(() => List.fill(12)("A").iterator)
+  val ret = source.alsoTo(sink).runForeach(println)
 
-  val ret = source.viaMat(???)(???)
-  .runWith(sink)
-
-  system.terminate()
+  ret.onComplete { _ =>
+    system.terminate()
+  }
 
 }
 
 class SumActor extends Actor {
   import SumActor._
 
-  override def receive: Receive = { case Command.StreamComplete =>
-    println("The Stream has been completed")
+  var allLength = 0L
+
+  override def receive: Receive = {
+
+    case s: String =>
+      allLength += s.length().toLong
+
+    case Command.StreamComplete =>
+      println(s"Total length[$allLength]")
+      assert(allLength == streamSize)
+      println("The Stream has been completed")
   }
 
 }
