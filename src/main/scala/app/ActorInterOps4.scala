@@ -6,9 +6,11 @@ import akka.stream._
 import akka.stream.scaladsl._
 import akka.NotUsed
 import scala.concurrent.ExecutionContextExecutor
-import app.ActorRefDSL.{streamSize => streamSize}
+import app.ActorInterOps4.{streamSize => streamSize}
 
-object ActorRefDSL extends App {
+/** Actor Sink without backpressure
+  */
+object ActorInterOps4 extends App {
   import SumActor._
 
   implicit val system: ActorSystem = ActorSystem("ActorRefDSL")

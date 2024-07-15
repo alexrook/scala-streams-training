@@ -11,6 +11,10 @@ import scala.util.Failure
 import scala.util.Success
 import scala.concurrent.ExecutionContextExecutor
 
+/**
+  * отправка элементов в sink на основе актора
+  * ack используется для backpressure
+  */
 object ActorInterOp2 extends App {
 
   implicit val system: ActorSystem = ActorSystem("ActorInterOp2")

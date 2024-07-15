@@ -9,6 +9,16 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.util.Failure
 import scala.util.Success
 
+/** from
+  * https://doc.akka.io/docs/akka/current/stream/stream-dynamic.html#dynamic-fan-in-and-fan-out-with-mergehub-broadcasthub-and-partitionhub
+  * A MergeHub allows to implement a dynamic fan-in junction point in a graph
+  * where elements coming from different producers are emitted in a
+  * First-Comes-First-Served fashion. If the consumer cannot keep up then all of
+  * the producers are backpressured. The hub itself comes as a Source to which
+  * the single consumer can be attached. It is not possible to attach any
+  * producers until this Source has been materialized (started). This is ensured
+  * by the fact that we only get the corresponding Sink as a materialized value.
+  */
 object DynamicSource extends App {
 
   implicit val system: ActorSystem = ActorSystem("DynamicSource")

@@ -8,7 +8,9 @@ import akka.actor.Actor
 import akka.actor.ActorSystem
 import akka.actor.Props
 import scala.concurrent.ExecutionContextExecutor
-
+/**
+  * запрос актора для каждого элемента стримаы
+  */
 object ActorInterOp1 extends App {
 
   class SimpleActor extends Actor {
@@ -20,7 +22,7 @@ object ActorInterOp1 extends App {
 
   implicit val askTimeout: Timeout = 5.seconds
   val words: Source[String, NotUsed] =
-    Source(List("hello", "hi"))
+    Source(List("hello", "hi", "akka"))
 
   val ref = system.actorOf(Props(new SimpleActor))
 

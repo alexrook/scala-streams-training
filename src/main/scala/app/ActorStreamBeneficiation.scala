@@ -16,6 +16,8 @@ import akka.NotUsed
 import akka.Done
 import scala.concurrent.Future
 
+/** Создание custom GraphStage который берет данные из актора
+  */
 object ActorStreamBeneficiation extends App {
 
   implicit val system: ActorSystem = ActorSystem("ActorStreamBeneficiation")
@@ -55,8 +57,6 @@ object ActorStreamBeneficiation extends App {
     }
   }
 
-  // will close upstream in all materializations of the graph stage instance
-// when the future completes
   class FromActorStreamBenefication(dbActor: ActorRef)
       extends GraphStage[FlowShape[String, (String, Option[Int])]] {
 
@@ -73,6 +73,7 @@ object ActorStreamBeneficiation extends App {
         var finished: Boolean = false
 
         override def preStart(): Unit = {
+          // callback можно создавать только в preStart или в хандлерах
           callback = getAsyncCallback[(String, Option[Int])] {
             case (el @ (key: String, value: Option[Int])) =>
               push(out, el)
