@@ -35,9 +35,8 @@ lazy val scalaTestLibs = {
 }
 
 lazy val loggingLibs = {
-  val slf4jV = "2.0.11"
-  val logbackVersion =
-    "1.3.6" // 1.4.0 does not support Java 8, so 1.3.X is a latest version for Java 8
+  val slf4jV = "2.0.13"
+  val logbackVersion = "1.5.6"
   Seq(
     "org.slf4j" % "slf4j-api" % slf4jV,
     "ch.qos.logback" % "logback-classic" % logbackVersion
@@ -62,3 +61,4 @@ lazy val soptLibs: Seq[ModuleID] = {
 }
 
 libraryDependencies ++= akkaLibs
+libraryDependencies ++= loggingLibs
