@@ -107,6 +107,15 @@ object Tcp1 extends App {
             .via(exitHandler)
             .map(ByteString(_))
 
+        /** замыкает концы flow друг с другом
+          * {{{
+          * +------+        +-------+
+          * |      | ~Out~> |       |
+          * | this |        | other |
+          * |      | <~In~  |       |
+          * +------+        +-------+
+          * }}}
+          */
         conn.handleWith(echo)
       }
 
