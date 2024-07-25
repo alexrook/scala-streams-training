@@ -62,3 +62,14 @@ lazy val soptLibs: Seq[ModuleID] = {
 
 libraryDependencies ++= akkaLibs
 libraryDependencies ++= loggingLibs
+
+assembly / assemblyJarName := "akka-streams-tr.jar"
+
+assembly / assemblyMergeStrategy := {
+  case PathList(ps @ _*) if ps.exists(_.contains("module-info.class")) =>
+    MergeStrategy.discard
+  case PathList(ps @ _*) if ps.last endsWith ".conf" => MergeStrategy.concat
+  case PathList(ps @ _*) if ps.last endsWith ".properties" =>
+    MergeStrategy.concat
+  case x => MergeStrategy.defaultMergeStrategy(x)
+}
