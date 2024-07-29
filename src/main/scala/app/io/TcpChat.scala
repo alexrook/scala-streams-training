@@ -43,13 +43,16 @@ object Shared {
   // This means that the complete flow handling runs on a single actor.
   // When it blocks for reading your messages it cannot print out anything.
   // The solution would be to add an async boundary, after your source
-  def prompt(s: String): Source[Message, _] =
-    Source // https://github.com/johanandren/akka-streams-tcp-chat/blob/f0209c5f07bae9bcf950adc3220cb0cdd34da93b/src/main/scala/akkastreamchat/Client.scala#L48C28-L48C85
-      .unfoldResource( // unfoldResource deals with blocking non-streamed things
-        create = () => Iterator.continually(StdIn.readLine(s"[$s]>")),
-        read = (iter: Iterator[String]) => Some(iter.next),
-        close = (iter: Iterator[String]) => ()
-      )
+  def chattingSource(s: String, initial: String): Source[Message, _] =
+    Source
+      .single(initial)
+      .merge {
+        Source.unfoldResource( // unfoldResource deals with blocking non-streamed things
+          create = () => Iterator.continually(StdIn.readLine(s"[$s]>")),
+          read = (iter: Iterator[String]) => Some(iter.next),
+          close = (iter: Iterator[String]) => ()
+        )
+      } // https://github.com/johanandren/akka-streams-tcp-chat/blob/f0209c5f07bae9bcf950adc3220cb0cdd34da93b/src/main/scala/akkastreamchat/Client.scala#L48C28-L48C85
 
   def outSink(w: String): Sink[String, NotUsed] =
     Sink.fromGraph {
@@ -96,7 +99,10 @@ object Tcp2Server extends App {
     .runForeach { conn =>
       conn.flow
         .join(protocol(s"fromClient[${conn.remoteAddress}]"))
-        .runWith(prompt("S"), outSink("Welcome from Server"))
+        .runWith(
+          chattingSource("S", "Hello Client"),
+          outSink("Here is the Server chat")
+        )
     }
 
 }
@@ -116,6 +122,6 @@ object Tcp2Client extends App {
 
   connection
     .join(protocol(s"fromServer[$port]"))
-    .runWith(prompt("C"), outSink("Welcome from Client"))
-  
+    .runWith(chattingSource("C", "Hello Server"), outSink("Here is the Client chat"))
+
 }
